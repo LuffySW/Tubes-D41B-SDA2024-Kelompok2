@@ -1,11 +1,10 @@
 #include "BTreeKamus.h"
 
-
 const char FileKamus[26] = "Kamus-Jawa-Indonesia.dat";
 
 int CountNode(Address Tree)
 {
-    if(Tree == NULL)
+    if (Tree == NULL)
         return 0;
     else
         return 1 + CountNode(Tree->Left) + CountNode(Tree->Right);
@@ -14,13 +13,14 @@ int CountNode(Address Tree)
 void PrintStatusProgram(Address Tree)
 {
     int Height = height(Tree);
-    int MaxHeight = ceil(log2(CountNode(Tree)))+1;
-    if (Height == 0) MaxHeight = 0;
+    int MaxHeight = ceil(log2(CountNode(Tree))) + 1;
+    if (Height == 0)
+        MaxHeight = 0;
     printf("Jumlah tree saat ini : %d\n", CountNode(Tree));
     printf("Ketinggian maksimum tree saat ini harus : %d\n", MaxHeight);
     printf("Ketinggian tree saat ini : %d\n", Height);
     printf("Status : ");
-    if(Height <= MaxHeight)
+    if (Height <= MaxHeight)
     {
         SuccMsg("Baik\n");
     }
@@ -62,8 +62,8 @@ void Execute(int Choice, Address *Tree, bool *Exit)
             {
                 BalancingTree(&(*Tree));
             }
-            if(isAVL((*Tree)))
-            PrintStatusProgram((*Tree));
+            if (isAVL((*Tree)))
+                PrintStatusProgram((*Tree));
         }
         SearchKata((*Tree));
         break;
@@ -80,10 +80,10 @@ void Execute(int Choice, Address *Tree, bool *Exit)
         scanf(" %[^\n]", InputUser);
         InputUser[0] = toupper(InputUser[0]);
         DeleteFromTree(&(*Tree), InputUser);
-        SaveTreeToFile((*Tree), "Kamus-Jawa-Indonesia.dat");  
+        SaveTreeToFile((*Tree), "Kamus-Jawa-Indonesia.dat");
         Pause();
         break;
-    case 6: 
+    case 6:
         printTreeWithRoot(*Tree);
         Pause();
         break;
@@ -217,8 +217,6 @@ void InputKamus(String *NewVocab)
     }
 }
 
-//InputKamus2
-//-----------
 void Input(String *NewVocab)
 {
     char Buffer[MAX_BUFFER];
@@ -282,7 +280,7 @@ void InsertToFile(String NewVocab, String NamaFile)
 
 String MergeKamus(Kamus NewKamus)
 {
-bool HaveContoh = false;
+    bool HaveContoh = false;
     bool HaveTingkatan = false;
     String Result;
     if (NewKamus.Contoh != NULL)
@@ -330,13 +328,11 @@ bool HaveContoh = false;
         strcat(Result, ")");
     }
 
-    if(HaveTingkatan)
+    if (HaveTingkatan)
     {
-        strcat(Result, "*");
         strcat(Result, NewKamus.Tingkatan);
         strcat(Result, "*");
     }
-
 
     strcat(Result, "\n");
     return Result;
@@ -426,6 +422,8 @@ void PrintKamus(Kamus Kamus)
     SetColor(NONE, FG_WHITE);
     printf("\n");
     (Kamus.Contoh != NULL) ? printf("Contoh: %s\n\n", Kamus.Contoh) : printf("Tidak ada contoh kalimat yang tersedia\n\n");
+    SetColor(NONE, FG_BLUE);
+    (Kamus.Tingkatan != NULL) ? printf("Tingkatan kata: %s\n\n", Kamus.Tingkatan) : printf("Tidak ada tingkatan kata yang tersedia\n\n");
     SetColor(NONE, FG_YELLOW);
     printf("===========================\n");
 
@@ -506,9 +504,9 @@ int IsFileValid()
         while (fscanf(fp, "%[^\n]\n", Buffer) == 1)
         {
             Row++;
-            if(HasChar(Buffer, '(') || HasChar(Buffer, ')'))
+            if (HasChar(Buffer, '(') || HasChar(Buffer, ')'))
             {
-                if (CountChar(Buffer, '.') < 2 || CountChar(Buffer, '=') != 1 || CountChar(Buffer, '(') != 1 || CountChar(Buffer, ')') != 1)
+                if (CountChar(Buffer, '.') < 2 || CountChar(Buffer, '=') != 1 || CountChar(Buffer, '(') != 1 || CountChar(Buffer, ')') != 1 || CountChar(Buffer, '*') != 1)
                 {
                     fclose(fp);
                     return Row;
@@ -516,13 +514,15 @@ int IsFileValid()
             }
             else
             {
-                if (CountChar(Buffer, '.') < 2 || CountChar(Buffer, '=') != 1 || CountChar(Buffer, '(') > 1 || CountChar(Buffer, ')') > 1)
+                if (CountChar(Buffer, '.') < 2 || CountChar(Buffer, '=') != 1 || CountChar(Buffer, '(') > 1 || CountChar(Buffer, ')') > 1 || CountChar(Buffer, '*') > 1)
                 {
                     fclose(fp);
                     return Row;
                 }
             }
         }
+        fclose(fp);
+        return 0;
     }
     return 0;
 }
@@ -584,7 +584,7 @@ int RefactorFile()
             {
                 if (i == 0)
                     (Buffer)[0] = toupper((Buffer)[0]);
-                if ((Buffer)[i] == ',' || (Buffer)[i] == '.' || (Buffer)[i] == '=' || (Buffer)[i] == '(')
+                if ((Buffer)[i] == ',' || (Buffer)[i] == '.' || (Buffer)[i] == '=' || (Buffer)[i] == '(' || (Buffer)[i] == '*')
                     (Buffer)[i + 1] = toupper((Buffer)[i + 1]);
             }
             StringToKamus(&TempKamus, Buffer);
@@ -602,11 +602,13 @@ void StringToKamus(Kamus *NewKamus, String Vocab)
     char Jawa[MAX_BUFFER];
     char Indonesia[MAX_BUFFER];
     char Contoh[MAX_BUFFER];
+    char Tingkatan[MAX_BUFFER]; // New field
     /* Variabel sementara Kamus */
-    sscanf(Vocab, "%[^=]=%[^(](%[^)])", Jawa, Indonesia, Contoh);
+    sscanf(Vocab, "%[^=]=%[^(](%[^)])%[^*]", Jawa, Indonesia, Contoh, Tingkatan); // Modified format string
     (*NewKamus).Jawa = AlokString(strlen(Jawa) + 1);
     (*NewKamus).Indonesia = AlokString(strlen(Indonesia) + 1);
     (*NewKamus).Contoh = NULL;
+    (*NewKamus).Tingkatan = NULL; // Initialize new field to NULL
     strcpy((*NewKamus).Jawa, Jawa);
     (*NewKamus).Jawa[0] = toupper((*NewKamus).Jawa[0]);
     (*NewKamus).Jawa[strlen(Jawa)] = 0;
@@ -617,6 +619,12 @@ void StringToKamus(Kamus *NewKamus, String Vocab)
         (*NewKamus).Contoh = AlokString(strlen(Contoh) + 1);
         (*NewKamus).Contoh[strlen(Contoh)] = 0;
         strcpy((*NewKamus).Contoh, Contoh);
+    }
+    if (HasChar(Vocab, '*')) // Check for * sign
+    {
+        (*NewKamus).Tingkatan = AlokString(strlen(Tingkatan) + 1); // Allocate memory for Tingkatan
+        (*NewKamus).Tingkatan[strlen(Tingkatan)] = 0;              // Null terminate the string
+        strcpy((*NewKamus).Tingkatan, Tingkatan);                  // Copy the string
     }
 }
 
@@ -635,7 +643,7 @@ void CheckAndLoadFile(Address *Tree)
         if (Row == 0)
         {
             SuccMsg("\nMelakukan penulisan ulang data pada file...\n");
-            RefactorFile();
+            // RefactorFile();
             SuccMsg("File tidak bermasalah...\n");
             SuccMsg("Memuat data...\n");
             sleep(2);
@@ -726,7 +734,7 @@ Address EditTree(Address Tree)
     KataL[0] = toupper(KataL[0]);
 
     Address Temp = SearchTree(Tree, KataL);
-    if(Temp == NULL)
+    if (Temp == NULL)
     {
         printf("Kata tidak ditemukan!");
         return NULL;
@@ -747,7 +755,7 @@ Address EditTree(Address Tree)
             strcpy(Temp->Kamus.Indonesia, KataB);
             strcat(Temp->Kamus.Indonesia, ".");
         }
-        else //jika memilih diubah Jawa dan contoh
+        else // jika memilih diubah Jawa dan contoh
         {
             printf("Masukkan kata terjemahan baru: ");
             scanf(" %[^\n]", KataB);
@@ -775,7 +783,7 @@ Address EditTree(Address Tree)
         PrintKamus(Temp->Kamus);
         Pause();
     }
-    SaveTreeToFile(Tree,"Kamus-Jawa-Indonesia.dat");
+    SaveTreeToFile(Tree, "Kamus-Jawa-Indonesia.dat");
     return Tree;
 }
 
@@ -789,7 +797,7 @@ Address DeleteFromTree(Address *Root, String Input)
         {
             return (*Root);
         }
-        else if(strcmp(Input, (*Root)->Kamus.Jawa) < 0)
+        else if (strcmp(Input, (*Root)->Kamus.Jawa) < 0)
         {
             (*Root)->Left = DeleteFromTree(&(*Root)->Left, Input);
         }
@@ -849,13 +857,14 @@ Address minValueTree(Address Root)
     return current;
 }
 
-void printTreeGraph(Address Root, int level,int lastLevel) 
+void printTreeGraph(Address Root, int level, int lastLevel)
 {
-    if (Root != NULL) 
+    if (Root != NULL)
     {
         printTreeGraph(Root->Left, level + 1, lastLevel);
         int distance = 2 * (level - 1);
-        if (level > lastLevel) {
+        if (level > lastLevel)
+        {
             printf("\n");
             printDistance(distance);
             lastLevel = level;
@@ -865,12 +874,13 @@ void printTreeGraph(Address Root, int level,int lastLevel)
     }
 }
 
-void printTreeWithRoot(Address Root) 
+void printTreeWithRoot(Address Root)
 {
-    if (Root != NULL) {
+    if (Root != NULL)
+    {
         printf("%s\n", Root->Kamus.Jawa);
         int distance = 2 * (height(Root) - 1);
-        if (distance != 0)  
+        if (distance != 0)
         {
             printDistance(distance);
             printTreeGraph(Root->Left, 2, 1);
@@ -881,19 +891,24 @@ void printTreeWithRoot(Address Root)
     }
 }
 
-void printDistance(int distance) {
-    for (int i = 0; i < distance; i++) {
+void printDistance(int distance)
+{
+    for (int i = 0; i < distance; i++)
+    {
         printf("-");
     }
 }
 
-void CopyTreeToFile(Address Tree, FILE *f) {
-    if (Tree != NULL) {
+void CopyTreeToFile(Address Tree, FILE *f)
+{
+    if (Tree != NULL)
+    {
         if (Tree->Kamus.Contoh == NULL)
         {
             fprintf(f, "%s.=%s*%s\n", Tree->Kamus.Jawa, Tree->Kamus.Indonesia, Tree->Kamus.Tingkatan);
         }
-        else{
+        else
+        {
             fprintf(f, "%s.=%s(%s)*%s\n", Tree->Kamus.Jawa, Tree->Kamus.Indonesia, Tree->Kamus.Contoh, Tree->Kamus.Tingkatan);
         }
         CopyTreeToFile(Tree->Left, f);
@@ -901,9 +916,11 @@ void CopyTreeToFile(Address Tree, FILE *f) {
     }
 }
 
-void SaveTreeToFile(Address Tree, String file) {
+void SaveTreeToFile(Address Tree, String file)
+{
     FILE *f = fopen(file, "w");
-    if (f == NULL) {
+    if (f == NULL)
+    {
         printf("File tidak dapat dibuka!\n");
         return;
     }
