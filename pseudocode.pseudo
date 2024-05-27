@@ -1,0 +1,810 @@
+DEFINE MAX_BUFFER 4092
+DECLARE FileKamus : ARRAY[1,26] OF CHAR
+FileKamus <- "Kamus-Sunda-Indonesia.dat"
+
+// Deklarasi Struktur Data Binary
+DECLARE Address : Pointer OF Binary
+DECLARE String : Pointer OF CHAR
+
+TYPE Kamus
+	DECLARE Indonesia, Sunda, Contoh : String
+ENDTYPE
+
+TYPE Binary
+	DECLARE Height : INTEGER
+	DECLARE Right, Left : Address
+	DECLARE Kamus : Kamus
+ENDTYPE
+
+// Deklarasi Struktur Data Linked List
+DECLARE AddressNodeNR : Pointer OF NodeNR
+
+TYPE
+	DECLARE Info : String
+	DECLARE Next : AddressNodeNR
+ENDTYPE
+
+
+// Procedure Koor
+// Baris, Kolom : Input
+PROCEDURE Koor(int Baris, int Kolom) // Mengambil dari tubes ddp kelompok roy
+	// Yang intinya adalah mengatur posisi kursor saat ini ke index Baris, Kolom
+END PROCEDURE
+
+// Procedure SetColor
+// kode1, kode2 : Input
+PROCEDURE SetColor(int kode1, int kode2)
+	// Yang intinya adalah mengatur agar teks yang tampil setelah perintah ini dijalankan
+	// Menjadi warna yang seseuai dengan kode warna yang di berikan di parameter
+END PROCEDURE
+	
+// Procedure DefaultColor
+PROCEDURE DefaultColor()
+	// Yang intinya adalah mengatur agar teks yang tampil setelah perintah ini dijalankan
+	// Menjadi warna background hitam dan foreground putih
+END PROCEDURE
+
+// Procedure ErrorMsg
+// ErrorMessage : Input
+PROCEDURE ErrorMsg(String ErrorMessage)
+	// Mengatur warna teksnya memiliki background marah dan warna teksnya putih
+	OUTPUT ErrorMessage
+END PROCEDURE
+
+// Procedure SuccMsg
+// SuccesMessage : Input
+PROCEDURE SuccMsg(String SuccesMessage)
+	// Mengatur warna teksnya memiliki background hijau dan warna teksnya hitam
+	OUTPUT SuccesMessage
+END PROCEDURE
+
+
+// Function Menu
+FUNCTION Menu() RETURN INTEGER
+	DECLARE Choice : INTEGER
+	// Clear Screen
+	OUTPUT "\nMenu\n"
+    OUTPUT "1. Tampilkan isi kamus Sunda - Indonesia\n"
+    OUTPUT "2. Tambah kosakata kamus\n"
+    OUTPUT "3. Mencari kosakata bahasa Sunda\n"
+    OUTPUT "4. Edit kosakata\n"
+    OUTPUT "5. Hapus kosakata\n"
+    OUTPUT "0. Keluar\n\n"
+    OUTPUT "Masukan pilihan anda: "
+	INPUT Choice
+
+	IF (Choice >= 0 AND Choice <= 5) THEN
+		RETURN Choice
+	END IF
+
+	OUTPUT "Pilihan anda tidak ada..."
+	RETURN Choice <- Menu()
+END FUNCTION
+
+
+// Procedure Pause
+PROCEDURE Pause()
+	OUTPUT "\nTekan tombol apapun untuk melanjutkan...\n"
+	getch()
+END PROCEDURE
+
+
+// Function Validasi
+FUNCTION Validasi() RETURN BOOLEAN
+	DECLARE Choice : CHAR
+	Choice <- ' '
+	OUTPUT "Tekan tombol [Y] jika iya..."
+	OUTPUT "Tekan tombol [N] jika tidak..."
+
+	WHILE ((Choice != 'Y') && (Choice != 'N')) DO
+		Choice <- toupper(getch())
+	END WHILE
+	RETURN Choice = 'Y'
+END FUNCTION
+
+
+// Procedure ExitApps
+PROCEDURE ExitApps()
+	OUTPUT "Terima kasih telah menggunakan aplikasi kami (^_^) \n"
+	OUTPUT "Keluar aplikasi"
+END PROCEDURE
+
+
+// Procedure InserKata
+// Tree : Input Output
+PROCEDURE InsertKata(Tree : Address)
+	// Deklarasi variabel
+	DECLARE NewKamus : Kamus
+	DECLARE AddressNodeNR : KamusSunda
+	DECLARE ValidToContinou : BOOLEAN
+
+	// Clear Screen
+	OUTPUT "Saat ini anda akan menambahkan kosakata bahasa Sunda\n"
+    CALL InputKamus(&NewKamus.Sunda)
+	CALL StringToList(&KamusSunda, NewKamus.Sunda)
+
+	WHILE (KamusSunda != NULL) DO
+        DECLARE TempSunda : Address
+		TempSunda <- SearchTree((*Tree), KamusSunda^.Info)
+        IF (TempSunda != NULL) THEN // Ada yang sama
+            // Tidak bisa dilanjutkan karena sudah ada
+            // Kalo mau edit aja kosakata yang lalu
+            OUTPUT "Peringatan!\n"
+            OUTPUT "Kosakata" + KamusSunda^.Info + " sudah ada, silahkan lakukan pengeditan menggunakan fitur edit kata jika ingin menambahkan sesuatu pada kosakata tersebut\n"
+            Pause()
+            dealok(NewKamus.Sunda)
+            ValidToContinou <- false
+            break
+        END IF
+        KamusSunda <- KamusSunda^.Next
+    END WHILE
+
+	IF (ValidToContinou) THEN
+
+        // Clear Screen
+        OUTPUT "Saat ini anda akan menambahkan kosakata bahasa Indonesia\n")
+        CALL InputKamus(&NewKamus.Indonesia)
+
+        // Clear Screen
+        OUTPUT "Ingin menambahkan contohnya?\n")
+        IF (Validasi()) THEN
+            // Clear Screen
+            OUTPUT "Saat ini anda akan menambahkan contoh penggunaan bahasa sunda nya\n")
+            CALL InputKamus(&NewKamus.Contoh)
+        ELSE
+            NewKamus.Contoh = NULL
+		END IF
+        // Insert To File
+        CALL InsertToTree(&Tree, NewKamus)
+        CALL InsertToFile(MergeKamus(NewKamus))
+    END IF
+
+	// Clear Screen
+	OUTPUT "Saat ini anda akan menambahkan kosakata bahasa Sunda\n"
+	CALL InputKamus(Kamus.Sunda)
+END PROCEDURE
+
+
+// Procedure InputKamus
+// NewVocab : Input Output
+PROCEDURE InputKamus(NewVocab : String)
+	NewVocab <- AlokString(1)
+	NewVocab[1] <- 0
+
+	WHILE(TRUE) DO
+		CALL Input(&NewVocab)
+		// Clear Screen
+		IF(NewVocab != NULL) THEN
+			OUTPUT "\nTambahkan kosakata lain yang mirip?\n"
+			IF(!CALL Validasi()) THEN
+				break
+			END IF
+		END IF
+	ENDWHILE
+END PROCEDURE
+
+// Procedure Input
+// NewVocab : Input Output
+PROCEDURE Input(NewVocab : String)
+	CHAR Buffer[MAX_BUFFER]
+	UNSIGNED INT LenOfVocab = 0
+	OUTPUT "Masukan kata: "
+	INPUT Buffer
+	LenOfVocab <- strlen(Buffer)
+	IF(LenOfVocab != 0) THEN
+		DECLARE Temp : String
+		Temp <- AlokString(LenOfVocab + 3)
+		strcpy(Temp, Buffer)
+		strcat(Temp, ".")
+		Temp[LenOfVocab + 2] <- 0
+		UNSIGNED INT LenOfNewVocab <- strlen(NewVocab)
+		(NewVocab) <- realloc((NewVocab), (LenOfNewVocab + LenOfVocab + 2)  sizeof(char))
+        strcat((NewVocab), Temp)
+        (NewVocab)[LenOfVocab + LenOfNewVocab + 1] <- 0
+	END IF
+END PROCEDURE
+
+// Procedure InsertToFile
+// NewVocab : Input
+PROCEDURE InsertToFile(NewVocab : String)
+	OPENFILE FileKamus FOR WRITE
+		IF(OPENFILE = NULL) THEN
+			OUTPUT "Gagal membuka file Kamus-Sunda-Indonesia.dat"
+			CLOSEFILE FileKamus
+		ELSE
+			WRITEFILE FileKamus, NewVocab
+			CLOSEFILE FileKamus 
+			OUTPUT "Berhasil menuliskan kosakata baru ke dalam file Kamus-Sunda-Indonesia.dat"
+		END IF
+		CALL Pause()
+END PROCEDURE
+
+// Function MergeKamus
+// NewKamus : Input
+FUNCTION MergeKamus(NewKamus : Kamus) RETURN String
+	DECLARE HaveContoh : BOOLEAN
+	DECLARE Result : String
+	
+	IF (NewKamus.Contoh != NULL) THEN
+		HaveContoh <- TRUE
+	END IF
+
+	IF (HaveContoh) THEN
+		Result <- AlokString(strlen(NweKamus.Sunda) + strlen(NewKamus.Indonesia) + strlen(NewKamus.Contoh) + 5)
+		Result[strlen(NweKamus.Sunda) + strlen(NewKamus.Indonesia) + strlen(NewKamus.Contoh) + 4)] <- 0
+		CALL ConvFromCharToChar(&NewKamus.Contoh, '.', ',')
+	ELSE
+		Result <- AlokString(strlen(NweKamus.Sunda) + strlen(NewKamus.Indonesia) + strlen(NewKamus.Contoh) + 3)
+		Result[strlen(NweKamus.Sunda) + strlen(NewKamus.Indonesia) + strlen(NewKamus.Contoh) + 2)] <- 0
+	END IF
+
+	CALL ConvFromCharToChar(&NewKamus.Sunda, '.', ',')
+    CALL ConvFromCharToChar(&NewKamus.Indonesia, '.', ',')
+	
+    strcpy(Result, NewKamus.Sunda)
+    strcat(Result, "=")
+    strcat(Result, NewKamus.Indonesia)
+
+    IF (HaveContoh) THEN
+    
+        strcat(Result, "(")
+        strcat(Result, NewKamus.Contoh)
+        strcat(Result, ")")
+    END IF
+    strcat(Result, "\n")
+    RETURN Result
+END FUNCTION
+
+// Procedure ConvFromCharToChar
+// Vocab : Input Output
+// CharFrom, CharThis : Input
+
+PROCEDURE ConvFromCharToChar(Vocab : String, CharFrom, CharThis : CHAR)
+	UNSIGNED INT LenOfVocab <- strlen(Vocab)
+	FOR (UNSIGNED INT i <- 1 TO LenOfVocab STEP 1)
+		IF(Vocab[i] = CharFrom AND i != LenOfVocab) THEN
+			Vocab[i] <- CharThis
+		END IF
+	END FOR
+END PROCEDURE
+
+
+// Procedure InsertToTree
+// Tree : Input Output
+// NewKamus : Input
+PROCEDURE InsertToTree(Tree : Address, NewKamus : Kamus)
+	DECLARE ListVocabSunda : AddressNodeNR
+	CALL StringToList(&ListVocabSunda, NewKamus.Sunda)
+	WHILE(ListVocabSunda != NULL) DO
+		CALL InsertBinaryTree(&Tree, NewKamus, Temp)
+		ListVocabSunda <- ListVocabSunda^.Next
+	END WHILE
+END PROCEDURE
+
+// Function AlokTree
+FUNCTION AlokTree() RETURN Address
+	RETURN (Address) malloc(sizeof(Binary))
+END FUNCTION
+
+// Function CreateKamus
+// NewKamus, VocabSunda : Input
+FUNCTION CreateKamus(NewKamus : Kamus, VocabSunda : String) RETURN Address
+	DECLARE NewTree : Address
+	NewTree <- AlokTree()
+	IF(NewTree != NULL) THEN
+		NewTree^.Height <- 1
+        NewTree^.Left <- NULL
+        NewTree^.Right <- NULL
+        NewTree^.Kamus.Sunda <- VocabSunda
+        NewTree^.Kamus.Indonesia <- NewKamus.Indonesia
+        NewTree^.Kamus.Contoh <- NewKamus.Contoh
+	ELSE THEN
+		OUTPUT "Gagal memuat kosakata ke dalam aplikasi"
+        CALL Pause()
+	END IF
+END FUNCTION
+
+// Procedure InsertBinaryTree
+// Tree : Input Output
+// NewKamus, VocabSunda : Input
+PROCEDURE InsertBinaryTree(Tree : Address, NewKamus : Kamus, VocabSunda : String)
+	IF(Tree = NULL) THEN
+		Tree <- CreateKamus(NewKamus, VocabSunda)
+	ELSE IF(strcmp(NewKamus.Sunda, Tree^.Kamus.Sunda) < 0) THEN
+		CALL InsertBinaryTree(&Tree^.Left, NewKamus, VocabSunda)
+	END IF
+	ELSE THEN
+		CALL InsertBinaryTree(&Tree^.Right, NewKamus, VocabSunda)
+	END IF
+END PROCEDURE
+
+// Procedure PrintTree
+// Root : Input
+PROCEDURE PrintTree(Root : Address)
+    IF(Root != NULL) THEN
+        CALL PrintTree(Root^.Left)
+        CALL PrintKamus(Root^.Kamus)
+        CALL PrintTree(Root^.Right)
+    END IF
+END PROCEDURE
+
+
+// Procedure PrintKamus
+// Kamus : Input
+PROCEDURE PrintKamus(Kamus : Kamus)
+    IF(Kamus.Sunda != NULL) THEN
+        OUTPUT "\t" + Kamus.Sunda
+    END IF
+    
+    OUTPUT " = \t"
+    
+    IF(Kamus.Indonesia != NULL) THEN
+        OUTPUT Kamus.Indonesia
+    END IF
+    
+    IF(Kamus.Contoh != NULL) THEN
+        OUTPUT "\tContoh: " + Kamus.Indonesia + "\n"
+    ELSE
+        OUTPUT "\tTidak ada contoh tersedia\n"
+    END IF
+
+END PROCEDURE
+
+
+// Procedure HeaderKamus
+PROCEDURE HeaderKamus()
+	OUTPUT "Sunda \t\t"
+	OUTPUT "Indonesia \t"
+	OUTPUT "Contoh \n"
+END PROCEDURE
+
+// Functoin HasChar
+// Check, Contain : Input
+FUNCTION HasChar(Check : String, Contain : CHAR) RETURN BOOLEAN
+	DECLARE Len, i : INTEGER
+	Len <- strlen(Check)
+	FOR (i <- 1 TO LEN STEP 1)
+		IF(Check[i] = Contain) THEN
+			RETURN TRUE
+		END IF
+	END FOR
+	RETURN FALSE
+END FUNCTION
+
+
+// Procedure LoadDataKamus
+// Output : Tree
+PROCEDURE LoadDataKamus(Tree : Address)
+	OPENFILE FileKamus FOR READ
+	IF (OPENFILE = NULL) THEN
+		OUTPUT "Gagal memuat data pada file Kamus-Sunda-Indonesia.dat\n"
+		CLOSEFILE FileKamus
+	ELSE
+		DECLARE Buffer : ARRAY[1:MAX_BUFFER*3] OF CHAR 1 DIMENSION
+		DECLARE Row : INTEGER
+		Row <- IsFileValid()
+		IF (Row = 0) THEN
+			WHILE (fscanf(OPENFILE, "%[^\n]\n", Buffer) = 1) DO
+				DECLARE Sunda, Indonesia, Contoh : ARRAY[1:MAX_BUFFER] OF CHAR 1 DIMENSION
+
+				sscanf(Buffer, "%[^=]=%[^(](%[^)])", Sunda, Indonesia, Contoh)
+                TempKamus.Sunda <- AlokString(strlen(Sunda) + 1)
+                TempKamus.Indonesia <- AlokString(strlen(Indonesia) + 1)
+                TempKamus.Contoh <- NULL
+                strcpy(TempKamus.Sunda, Sunda)
+                TempKamus.Sunda[strlen(Sunda)] <- 0
+                strcpy(TempKamus.Indonesia, Indonesia)
+                TempKamus.Indonesia[strlen(Indonesia)] <- 0
+                IF (HasChar(Buffer, '('))) THEN
+                    TempKamus.Contoh <- AlokString(strlen(Contoh) + 1)
+                    TempKamus.Contoh[strlen(Contoh)] <- 0
+                    strcpy(TempKamus.Contoh, Contoh)
+                END IF
+                InsertToTree(&(*Tree), TempKamus)
+			END WHILE
+			CLOSEFILE FileKamus
+			OUTPUT "Berhasil memuat data kamu pada file Kamus-Sunda-Indonesia.dat\n"
+		
+		ELSE IF (Row = -1) THEN
+			OUTPUT "Tidak dapat memuat apapun, file masih kosong\n"
+			CLOSEFILE FileKamus
+		END IF
+		ELSE
+			sprintf(Buffer, "%d", Row)
+            OUTPUT "Ada kesalahan format teks pada file Kamus-Sunda-Indonesia.dat\n")
+            OUTPUT "Silahkan perbaiki format teks pada file tersebut pada Baris ke ")
+            OUTPUT Buffer
+            CLOSEFILE FileKamus
+		END IF
+	END IF
+	CALL Pause()
+END PROCEDURE
+
+// Function IsFileValid
+FUNCTION IsFileValid() RETURN INTEGER
+	OPENFILE FileKamus FOR READ
+	IF (OPENFILE = NULL) THEN
+		OUTPUT "Gagal melakukan proses pengecekan file Kamus-Sunda-Indonesia.dat"
+		CLOSEFILE FileKamus
+		CALL Pause()
+		RETURN FALSE
+	ELSE
+		DECLARE Buffer : ARRAY[1:MAX_BUFFER] OF CHAR 1 DIMENSION
+        DECLARE Row : INTEGER
+		Row <- 0
+        fseek(FileKamus, 0, SEEK_END)
+        IF (ftell(FileKamus) = 0) THEN
+            RETURN -1
+        END IF
+        rewind(FileKamus)
+        WHILE (fscanf(FileKamus, "%[^\n]\n", Buffer) = 1) DO
+            Row++
+            IF (CountChar(Buffer, '.') < 2 OR CountChar(Buffer, '=') != 1 OR CountChar(Buffer, '(') > 1 OR CountChar(Buffer, ')') > 1) THEN
+                RETURN Row
+			END IF
+        END WHILE
+        CLOSEFILE FileKamus
+        Row <- 0
+        RETURN Row
+	END IF
+END FUNCTION
+
+// Function CountChar
+// StrCheck, CharCheck : Input
+FUNCTION CountChar(StrCheck : String, CharCheck : CHAR) RETURN INTEGER
+	DECLARE Len,i : UNSIGNED INTEGER
+	DECLARE Count : INTEGER
+	Count <- 0
+	FOR (i <- 1 TO Len STEP 1) DO
+		IF(StrCheck[i] = CharCheck)THEN
+			Count++
+		END IF
+	END FOR
+END FUNCTION
+
+
+// Procedure StringToList
+// Output : List
+// Input : Vocab
+PROCEDURE StringToList(List : AddressNodeNR, Vocab : String)
+	DECLARE Temp : String
+	DECLARE i,j : UNSIGNED INT
+	ListVocabSunda <- NULL
+	Temp <- AlokString(strlen(NewKamus.Sunda))
+	Temp[strlen(NewKamus.Sunda) + 1] = 0
+	i <- 1
+	j <- 1
+	WHILE(j != strlen(NewKamus.Sunda)) DO
+		WHILE(NewKamus.Sunda[j] != '.') DO
+			Temp[i] <- NewKamus.Sunda[j]
+			i++
+			j++
+		ENDWHILE
+		Temp[i] <- 0
+		i <- 1
+		j++
+		CALL InsertNR(&ListVocabSunda, Temp)
+	ENDWHILE
+END PROCEDURE
+
+
+// Balancing
+// Funcrion InitBalance()
+FUNCTION InitBalance() RETURN AddressNodeNR
+	RETURN NULL
+END FUNCTION
+
+// Function CreateModeBalance
+// Input : NewKamus
+FUNCTION CreateModeBalance() RETURN AddressNodeNR
+	DECLARE NewBalancing : AddressBalancing
+	NewBalancing <- alok(sizeof(Balancing))
+	IF (NewBalancing != NULL)
+		NewBalancing.Kamus <- NewKamus
+		NewBalancing.Next <- NULL
+	ELSE
+		OUTPUT "Terjadi kesalahan: Mungkin memori sudah penuh...\n"
+	END IF
+	RETURN NewBalancing
+END FUNCTION
+
+
+// Function BalancingIsEmpty
+// Input : Balancing
+FUNCTION BalancingIsEmpty(Balancing : AddressBalancing) RETURN AddressNodeNR
+	RETURN (Balancing = NULL)
+END FUNCTION
+
+// Procedure InsertBalancing()
+// Output : Balancing
+// Input : NewKamus
+PROCEDURE InsertBalancing(Balancing : AddressBalancing, NewKamus : Kamus)
+	NewBalancing : AddressBalancing
+	NewBalancing <- CreateModeBalance(NewKamus)
+	IF (NewBalancing != NULL) THEN
+		IF (Balancing != NULL) THEN
+			Temp : AddressBalancing
+			Temp <- Balancing
+			WHILE (Temp^.Next != NULL) DO
+				Temp <- Temp^.Next
+			END WHILE
+			Temp^.Next <- NewBalancing
+		ELSE
+			Balancing <- NewBalancing
+		END IF
+	END IF
+END PROCEDURE
+
+// Procedure DeleteBalancing
+// Output : Balancing
+// INput : Target
+PROCEDURE DeleteBalancing(Balancing : AddressBalancing, Target : String)
+	Prev, Del : AddressBalancing
+	IF (BalancingIsEmpty(Balancing)) THEN
+		OUTPUT "Data sudah kosong...\n"
+	ELSE
+		WHILE (Del != NULL && strcmp(Del^.Kamus.Sunda, Target) != 0) DO
+			Prev <- Del
+			Del <- Del^.Next
+		END WHILE
+
+		IF (Del = NULL) THEN
+
+		ELSE
+			IF (Prev = NULL) THEN
+				Balancing <- Del^.Next
+				CALL dealok(Del^.Kamus.Sunda)
+				CALL dealok(Del)
+			END IF
+		ELSE
+			Prev^.Next <- Del^.Next
+			CALL dealok(Del^.Kamus.Sunda)
+			CALL dealok(Del)
+		END IF
+	END IF
+END PROCEDURE
+
+// Procedure BalancingTree
+// Output : Tree
+// Input : Tree
+PROCEDURE BalancingTree(Tree : Address)
+	ListBalancing : AddressBalancing
+	ListBalancing <- InitBalance()
+	CALL SortBalancing(Tree, &ListBalancing)
+	Tree <- NULL
+	IF(ListBalancing != NULL) THEN
+		CALL InsertTreeBalancing(&Tree, &ListBalancing)
+	END IF
+END PROCEDURE
+
+// Procedure SortBalancing
+// Input : Tree, ListBalancing
+// Output : ListBalancing
+PROCEDURE SortBalancing(Tree : Address, ListBalancing : AddressBalancing)
+	IF (Tree != NULL) THEN
+		CALL SortBalancing(Tree^.Left, &ListBalancing)
+		CALL InsertBalancing(&ListBalancing, Tree^.Kamus)
+		CALL SortBalancing(Tree^.Right, &ListBalancing)
+	END IF
+END PROCEDURE
+
+// Procedure InsertTreeBalancing
+// Output & Input : Tree, Listbalancing
+PROCEDURE InsertTreeBalancing(Tree : Address, ListBalancing : AddressBalancing)
+	IF(Listbalancing != NULL)THEN
+		Root, PrevRoot, ListLeft, ListRight : AddressBalancing
+		Root <- MidBalancing(ListBalancing)
+		PrevRoot <- InitBalance()
+		ListLeft <- InitBalance()
+		ListRight <- InitBalance()
+
+		CALL InsertBinaryTree(&Tree, Root^.Kamus, Root^.Kamus.Sunda, 1)
+
+		IF (Root != NULL) THEN
+			ListLeft <- ListBalancing
+		ELSE
+			ListLeft <- NULL
+		END IF
+		ListRight <- Root^.Next
+		PrevRoot <- ListLeft
+		WHILE (PrevRoot != NULL) DO
+			IF (PrevRoot^.Next != NULL AND Root != NULL) THEN
+				IF (strcmp(PrevRoot^.Next^.Kamus.Sunda, Root^.Kamus.Sunda) = 0) THEN
+					break
+				END IF
+			END IF
+			PrevRoot <- PrevRoot^.Next
+		END WHILE
+		CALL dealok(Root)
+		Root <- NULL
+		IF(PrevRoot != NULL) THEN
+			PrevRoot^.Next <- NULL
+		END IF
+		CALL InsertTreeBalancing(&Tree, &ListLeft)
+		CALL InsertTreeBalancing(&Tree, &ListRight)
+	END IF
+END PROCEDURE
+
+// Function MidBalancing
+// Input : NodeBalancing
+FUNCTION MidBalancing(NodeBalancing : AddressBalancing) RETURN AddressBalancing
+	DECLARE LenList, i : INTEGER
+	LenList <- (LenList % 2 = 1) ? LenList / 2 + 1 : LenList / 2
+    for (i <- 1 to LenList STEP 1)
+    DO
+        NodeBalancing <- NodeBalancing->Next
+    END FOR
+    RETURN NodeBalancing
+END FUNCTION
+
+// Function CountListBalancing
+// Input : ListBalancing
+FUNCTION CountListBalancing(ListBalancing : AddressBalancing) RETURN INTEGER
+	Total : INTEGER
+	Total <- 0
+	WHILE (ListBalancing != NULL) DO
+		Total <- Total + 1
+		Listbalancing <- ListBalancing^.Next
+	END WHILE
+END FUNCTION
+
+
+// Procedure LoadDataKamus
+// Output : Tree
+PROCEDURE LoadDataKamus(Tree : Address)
+	OPENFILE FileKamus FOR READ
+	IF (OPENFILE = NULL) THEN
+		OUTPUT "Gagal memuat data pada file Kamus-Sunda-Indonesia.dat\n"
+		CLOSEFILE FileKamus
+	ELSE
+		DECLARE TempKamus : Kamus
+		DECLARE Buffer : Arrar of CHAR 1..MAX_BUFFER * 3
+		WHILE (fscanf(fp, "%[^\n]\n", Buffer) = 1) DO
+			CALL StringToKamus(&TempKamus, Buffer)
+			CALL InsertToTree(&Tree, TempKamus)
+		END WHILE		
+		OUTPUT "Berhasil memuat data kamus pada file Kamus-Sunda-Indonesia.dat\n"
+	END IF
+	CLOSEFILE FileKamus
+	CALL Pause()
+END PROCEDURE
+
+// Procedure StringToKamus
+// Output : NewKamus
+// Input : Vocab
+PROCEDURE StringToKamus(NewKamus : Kamus, Vocab : String)
+	DECLARE Sunda[MAX_BUFFER] : CHAR 
+	DECLARE Indonesia[MAX_BUFFER] : CHAR 
+	DECLARE Contoh[MAX_BUFFER] : CHAR 
+    /* Variabel sementara Kamus */
+    sscanf(Vocab, "%[^=]=%[^(](%[^)])", Sunda, Indonesia, Contoh)
+    (*NewKamus)^.Sunda <- AlokString(strlen(Sunda) + 1)
+    (*NewKamus)^.Indonesia <- AlokString(strlen(Indonesia) + 1)
+    (*NewKamus)^.Contoh <- NULL
+    strcpy((*NewKamus)^.Sunda, Sunda)
+    (*NewKamus)^.Sunda[0] <- toupper((*NewKamus)^.Sunda[0])
+    (*NewKamus)^.Sunda[strlen(Sunda)] <- 0
+    strcpy((*NewKamus)^.Indonesia, Indonesia)
+    (*NewKamus)^.Indonesia[strlen(Indonesia)] <- 0
+    IF (HasChar(Vocab, '('))
+    THEN
+        (*NewKamus)^.Contoh <- AlokString(strlen(Contoh) + 1)
+        (*NewKamus)^.Contoh[strlen(Contoh)] <- 0
+        strcpy((*NewKamus)^.Contoh, Contoh)
+    END IF
+END PROCEDURE
+
+
+// Function RefactorFile
+FUNCTION RefactorFile() RETURN int
+    OPENFILE FileKamus
+    remove("TempFile.dat")
+
+    IF (fp = NULL) THEN
+        OUTPUT "Gagal memuat data pada file Kamus-Sunda-Indonesia.dat\n"
+        CLOSEFILE FileKamus
+        RETURN 0
+    ELSE
+        TempKamus : Kamus
+        DECLARE Buffer : Array of CHAR 1 Dimensi 1..MAX_BUFFER * 3
+        while (fscanf(fp, "%[^\n]\n", Buffer) = 1)
+        DO
+
+            int LenOfVocab <- strlen(Buffer)
+            for (int i <- 0 i < LenOfVocab i++)
+            DO
+                IF (i = 0)
+                    (Buffer)[0] = toupper((Buffer)[0])
+				END IF
+                IF ((Buffer)[i] = ',' || (Buffer)[i] = '.' || (Buffer)[i] = '=' || (Buffer)[i] = '(')
+                    (Buffer)[i + 1] = toupper((Buffer)[i + 1])
+				END IF
+            END FOR
+            CALL StringToKamus(&TempKamus, Buffer)
+            CALL InsertToFile(MergeKamus(TempKamus), "TempFile.dat")
+        END WHILE
+        CLOSEFILE FileKamus
+        remove("Kamus-Sunda-Indonesia.dat")
+        rename("TempFile.dat", "Kamus-Sunda-Indonesia.dat")
+    END IF
+    RETURN 1
+END FUNCTION
+
+
+// Procedure CheckAndLoadFile
+// Output : Tree
+PROCEDURE CheckAndLoadFile(Address *Tree)
+    remove("TempFile.dat")
+    CALL Sukses : BOOLEAN
+    do
+        Sukses <- false
+        system("cls")
+        OUTPUT "Sedang melakukan pengecekan file Kamus-Sunda-Indonesia.dat...\n")
+        int Row <- IsFileValid()
+        OUTPUT "\nPengecekan sudah selesai...\n"
+        IF (Row = 0)
+        THEN
+            OUTPUT "\nMelakukan penulisan ulang data pada file...\n"
+            CALL RefactorFile()
+            OUTPUT "File tidak bermasalah...\n"
+            OUTPUT "Memuat data...\n"
+            sleep(2)
+            CALL LoadDataKamus(&Tree)
+            Sukses <- true
+
+			ELSE IF (Row = -1)
+			THEN
+				OUTPUT "Tidak dapat memuat apapun, file masih kosong\n")
+			END IF
+        ELSE
+            char Str[10]
+            sprintf(Str, "%d", Row)
+            OUTPUT "Ada kesalahan format teks pada file Kamus-Sunda-Indonesia.dat\n")
+            OUTPUT "Silahkan perbaiki format teks pada file tersebut pada Baris ke ")
+            OUTPUT (Str)
+            printf("\n")
+        END IF
+        IF (!Sukses)
+        THEN
+            OUTPUT "Muat ulang file?\n")
+            IF (!Validasi()) THEN
+                Sukses = true
+			END IF
+        END IF
+    while (!Sukses)
+END PROCEDURE
+
+
+// Function CountNode
+// Input : Tree
+FUNCTION CountNode(Address Tree) return INTEGER
+    IF (Tree == NULL)
+        return 0
+    ELSE
+        return 1 + CountNode(Tree->Left) + CountNode(Tree->Right)
+END FUNCTION
+
+
+PROCEDURE PrintStatusProgram(Tree : Address)
+    int Height = height(Tree)
+    int MaxHeight = round(log2(CountNode(Tree)))
+    OUTPUT "Jumlah tree saat ini : " + CountNode(Tree)
+    OUTPUT "Ketinggian maksimum tree saat ini harus : " + MaxHeight
+    OUTPUT "Ketinggian tree saat ini : " + Height
+    OUTPUT "Status : "
+    if(Height <= MaxHeight)
+    THEN
+        CALL SuccMsg("Baik\n")
+    else
+        CALL ErrorMsg("Buruk\n")
+    END IF
+END PROCEDURE
+
+PROCEDURE DeleteAllTree(Tree : Address)
+    if((*Tree) != NULL)
+    THEN
+        CALL DeleteAllTree(&Tree^.Left)
+        CALL DeleteAllTree(&Tree^.Right)
+        free((*Tree));
+	END IF
+END PROCEDURE

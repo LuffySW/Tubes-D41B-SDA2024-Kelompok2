@@ -9,4 +9,9 @@ Proyek ini merupakan tugas besar untuk mata kuliah Struktur Data dan Algoritma (
 - 231524049 Luthfi Satrio Wicaksono
 - 231524063 Tirta Rifky Fauzan
 
+untuk menjalankannya bisa menggunakan perintah "make run" di terminal atau "mingw32-make run"
+
+"make / mingw32-make clean" untuk menghapus file file .o , .d, dan .exe yang ada
+
+"make / mingw32-make" untuk mengcompile
 
