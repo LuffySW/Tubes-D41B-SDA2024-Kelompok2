@@ -214,7 +214,7 @@ void InsertKata(Address *Tree);
     F.S: Kosakata baru sudah masuk ke dalam tree dan juga sudah tertulis di file
 */
 
-void InputKamus(String *NewVocab);
+void InputKamus(String *NewVocab, bool isContoh);
 /* Untuk melakukan input perulangan pada saat memasukan sebuah kosakata baru ke dalam satu
     variabel misal variabel : Sunda / Indonesia / Contoh dalam tipe data String atau Pointer Of Char
     I.S: Variabel kamus belum terisi kosakata apapun

@@ -119,7 +119,7 @@ void InsertKata(Address *Tree)
 
     system("cls");
     printf("Saat ini anda akan menambahkan kosakata bahasa Jawa\n");
-    InputKamus(&NewKamus.Jawa);
+    InputKamus(&NewKamus.Jawa, false); // Tambahkan false karena ini bukan contoh kalimat
 
     // Lakukan pengecekan pada setiap kosakata yang ada di dalam kamus Jawa
     StringToList(&KamusJawa, NewKamus.Jawa);
@@ -145,7 +145,7 @@ void InsertKata(Address *Tree)
     {
         system("cls");
         printf("Saat ini anda akan menambahkan kosakata bahasa Indonesia\n");
-        InputKamus(&NewKamus.Indonesia);
+        InputKamus(&NewKamus.Indonesia, false); // Tambahkan false karena ini bukan contoh kalimat
 
         system("cls");
         printf("Ingin menambahkan contoh kalimat nya?\n");
@@ -153,7 +153,7 @@ void InsertKata(Address *Tree)
         {
             system("cls");
             printf("Saat ini anda akan menambahkan contoh penggunaan bahasa Jawa nya\n");
-            InputKamus(&NewKamus.Contoh);
+            InputKamus(&NewKamus.Contoh, true); // Tambahkan true karena ini contoh kalimat
         }
         else
         {
@@ -202,7 +202,7 @@ void InsertKata(Address *Tree)
     }
 }
 
-void InputKamus(String *NewVocab)
+void InputKamus(String *NewVocab, bool isContoh)
 {
     *NewVocab = AlokString(1);
     (*NewVocab)[0] = 0;
@@ -211,11 +211,15 @@ void InputKamus(String *NewVocab)
         Input(&(*NewVocab));
         system("cls");
         printf("%s\n", *NewVocab);
-        if ((*NewVocab) != NULL)
+        if ((*NewVocab) != NULL && !isContoh)
         {
-            printf("\nTambahkan sinonim ?\n");
+            printf("\nTambahkan sinonim?\n");
             if (!Validasi())
                 break;
+        }
+        else
+        {
+            break; // Langsung keluar dari loop jika isContoh
         }
     }
 }
