@@ -46,7 +46,6 @@ void Execute(int Choice, Address *Tree, bool *Exit)
         system("cls");
         InsertKata(&(*Tree));
         break;
-
     case 3:
         // Mencari string
         system("cls");
@@ -71,7 +70,6 @@ void Execute(int Choice, Address *Tree, bool *Exit)
         system("cls");
         EditTree(*Tree);
         break;
-
     case 5:
         // Menghapus kosakata
         system("cls");
@@ -101,7 +99,6 @@ void Execute(int Choice, Address *Tree, bool *Exit)
         {
             *Exit = true;
             /* End program */
-            SaveTreeToFile((*Tree), "Kamus-Jawa-Indonesia.dat");
             ExitApps();
         }
         break;
@@ -117,7 +114,7 @@ void InsertKata(Address *Tree)
     // Input Kosa Kata Baru
     Kamus NewKamus;
     AddressNodeNR KamusJawa = NULL;
-    bool ValidToContinou = true;
+    bool ValidToContinue = true;
     int tingkatan;
 
     system("cls");
@@ -137,23 +134,21 @@ void InsertKata(Address *Tree)
             printf("Kosakata ");
             ErrorMsg(KamusJawa->Info);
             printf(" sudah ada di dalam program, silahkan lakukan pengeditan menggunakan fitur edit kata jika ingin menambahkan sesuatu pada kosakata tersebut\n");
-            Pause();
             free(NewKamus.Jawa);
-            ValidToContinou = false;
+            ValidToContinue = false;
             break;
         }
         KamusJawa = KamusJawa->Next;
     }
 
-    if (ValidToContinou)
+    if (ValidToContinue)
     {
-
         system("cls");
         printf("Saat ini anda akan menambahkan kosakata bahasa Indonesia\n");
         InputKamus(&NewKamus.Indonesia);
 
         system("cls");
-        printf("Ingin menambahkan contohnya?\n");
+        printf("Ingin menambahkan contoh kalimat nya?\n");
         if (Validasi())
         {
             system("cls");
@@ -161,7 +156,9 @@ void InsertKata(Address *Tree)
             InputKamus(&NewKamus.Contoh);
         }
         else
+        {
             NewKamus.Contoh = NULL;
+        }
 
         system("cls");
         printf("Ingin menambahkan tingkatan kata?\n");
@@ -190,13 +187,19 @@ void InsertKata(Address *Tree)
             }
         }
         else
+        {
             NewKamus.Tingkatan = 0;
+        }
 
         // Insert To File
         InsertToFile(MergeKamus(NewKamus), "Kamus-Jawa-Indonesia.dat");
         InsertToTree(&(*Tree), NewKamus);
+        Pause(); // Hanya memanggil pause di sini jika tidak ada kesalahan
     }
-    Pause();
+    else
+    {
+        Pause(); // Memanggil pause di sini jika ada kesalahan
+    }
 }
 
 void InputKamus(String *NewVocab)
@@ -210,7 +213,7 @@ void InputKamus(String *NewVocab)
         printf("%s\n", *NewVocab);
         if ((*NewVocab) != NULL)
         {
-            printf("\nTambahkan sinonim kata bahasa Jawanya?\n");
+            printf("\nTambahkan sinonim ?\n");
             if (!Validasi())
                 break;
         }
@@ -905,10 +908,12 @@ void CopyTreeToFile(Address Tree, FILE *f)
     {
         if (Tree->Kamus.Contoh == NULL)
         {
+            printf("DEBUG: Menulis ke file: %s.=%s*%s\n", Tree->Kamus.Jawa, Tree->Kamus.Indonesia, Tree->Kamus.Tingkatan);
             fprintf(f, "%s.=%s*%s\n", Tree->Kamus.Jawa, Tree->Kamus.Indonesia, Tree->Kamus.Tingkatan);
         }
         else
         {
+            printf("DEBUG: Menulis ke file: %s.=%s(%s)*%s\n", Tree->Kamus.Jawa, Tree->Kamus.Indonesia, Tree->Kamus.Contoh, Tree->Kamus.Tingkatan);
             fprintf(f, "%s.=%s(%s)*%s\n", Tree->Kamus.Jawa, Tree->Kamus.Indonesia, Tree->Kamus.Contoh, Tree->Kamus.Tingkatan);
         }
         CopyTreeToFile(Tree->Left, f);
@@ -929,3 +934,4 @@ void SaveTreeToFile(Address Tree, String file)
 
     fclose(f);
 }
+
