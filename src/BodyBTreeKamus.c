@@ -681,10 +681,6 @@ void CheckAndLoadFile(Address *Tree)
     } while (!Sukses);
 }
 
-/*================= Roy =======================*/
-
-/*=======================Naila=====================*/
-
 Address SearchTree(Address Root, String Input)
 {
     if (Root == NULL || strcmp(Root->Kamus.Jawa, Input) == 0)
@@ -905,11 +901,11 @@ void CopyTreeToFile(Address Tree, FILE *f)
     {
         if (Tree->Kamus.Contoh == NULL)
         {
-            fprintf(f, "%s.=%s*%s\n", Tree->Kamus.Jawa, Tree->Kamus.Indonesia, Tree->Kamus.Tingkatan);
+            fprintf(f, "%s.=%s( )%s*\n", Tree->Kamus.Jawa, Tree->Kamus.Indonesia, Tree->Kamus.Tingkatan);
         }
         else
         {
-            fprintf(f, "%s.=%s(%s)*%s\n", Tree->Kamus.Jawa, Tree->Kamus.Indonesia, Tree->Kamus.Contoh, Tree->Kamus.Tingkatan);
+            fprintf(f, "%s.=%s(%s)%s*\n", Tree->Kamus.Jawa, Tree->Kamus.Indonesia, Tree->Kamus.Contoh, Tree->Kamus.Tingkatan);
         }
         CopyTreeToFile(Tree->Left, f);
         CopyTreeToFile(Tree->Right, f);
