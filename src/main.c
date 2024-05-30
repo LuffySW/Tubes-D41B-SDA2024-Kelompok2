@@ -12,10 +12,6 @@ int main()
     // Memuat data
     // remove("Kamus-Sunda-Indonesia.dat");
     CheckAndLoadFile(&RootKamus);
-
-    // Melakukan balancing tree setelah memuat data
-     BalancingTree(&RootKamus);
-
     /* Run */
     while(!Exit) Execute(Menu(), &RootKamus, &Exit);
     
