@@ -412,6 +412,8 @@ void PrintTree(Address Root)
 
 void PrintKamus(Kamus Kamus)
 {
+    SetColor(NONE, FG_YELLOW);
+    printf("======================================================\n");
     SetColor(NONE, FG_GREEN);
     if (Kamus.Jawa != NULL)
         printf("%s\t", Kamus.Jawa);
@@ -429,21 +431,27 @@ void PrintKamus(Kamus Kamus)
     SetColor(NONE, FG_BLUE);
     (Kamus.Tingkatan != NULL) ? printf("Tingkatan kata: %s\n\n", Kamus.Tingkatan) : printf("Tidak ada tingkatan kata yang tersedia\n\n");
     SetColor(NONE, FG_YELLOW);
-    printf("===========================\n");
+    printf("======================================================\n");
 
     DefaultColor();
 }
 
 void HeaderKamus()
 {
+    SetColor(NONE, FG_YELLOW);
+    printf("======================================================\n");
     SetColor(NONE, FG_GREEN);
     printf("Jawa \t\t");
+    SetColor(NONE, FG_YELLOW);
+    printf(" = \t");
     SetColor(NONE, FG_CYAN);
     printf("Indonesia\n");
     SetColor(NONE, FG_WHITE);
     printf("Contoh \n");
+    SetColor(NONE, FG_BLUE);
+    printf("Tingkatan kata \n");
     SetColor(NONE, FG_YELLOW);
-    printf("===========================\n");
+    printf("======================================================\n");
     DefaultColor();
 }
 
@@ -683,6 +691,10 @@ void CheckAndLoadFile(Address *Tree)
                 Sukses = true;
         }
     } while (!Sukses);
+    Tingkatan();
+    sleep(10);
+    // Optional: Clear or close the UI after 5 seconds
+    system("cls");
 }
 
 Address SearchTree(Address Root, String Input)

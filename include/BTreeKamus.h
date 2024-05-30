@@ -329,10 +329,12 @@ void CheckAndLoadFile(Address *Tree);
 // Mengecek dan memuat data yang ada di dalam file Kamus-Sunda-Indonesia.dat
 void Banner();
 /* Menampilkan banner program */
+void Tingkatan();
+// Menampilkan penjelasan tingkatan dalam bahasa Jawa
 void PrintStatusProgram(Address Tree);
 // menampilkan status kinerja program saat ini dengan menghitung berapa jumlah maksimal suatu node dengan rumus log2(n) n adalah jumlah node yang ada
 int CountNode(Address Tree);
-// menghitung jumlah node yang ada saat ini di dalma tree
+// menghitung jumlah node yang ada saat ini di dalam tree
 /* ==================================================== */
 /* ==================================================== */
 

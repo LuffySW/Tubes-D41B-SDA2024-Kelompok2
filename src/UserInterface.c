@@ -184,32 +184,32 @@ Koor(20,37);  printf("%c 3. Retryanzani Dwi Fauzan      (221524028) %c\n", 186, 
 Koor(21,37);  printf("%c                                            %c\n", 186, 186);
 Koor(22,37);  printf("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", 200,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,188);
 Koor(23,25);  printf("      https://github.com/LuffySW/Tubes-D41B-SDA2024-Kelompok2.git\n");
+Koor(24,37);  printf("                                                                                             \n");
+Koor(25,37);  printf("                                                                                             \n");
+Koor(26,37);  printf("                                                                                             \n");
 }
 
 void Tingkatan()
 {
 
-Koor(10,12);  printf("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", 201,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,187);
-Koor(11,12);  printf("%c                   Selamat Datang di Aplikasi Kamus Bahasa                   %c\n", 186,       186);
-Koor(12,12);  printf("%c                               Indonesia - Jawa                              %c\n", 186,       186);
-Koor(13,12);  printf("%c                                                                             %c\n", 186,       186);
-Koor(14,12);  printf("%c        %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c       %c\n", 186,              220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,       186);
-Koor(15,12);  printf("%c                                                                             %c\n", 186,       186);
-Koor(16,12);  printf("%c                         Bahasa Jawa dan Tingkatannya                        %c\n", 186,       186);
-Koor(17,12);  printf("%c                                                                             %c\n", 186,       186);
-Koor(18,12);  printf("%c                                                                             %c\n", 186,       186);
-Koor(19,12);  printf("%c        Bahasa Jawa Ngoko : Bahasa ini lebih santai dan tidak formal.        %c\n", 186,       186);
-Koor(20,12);  printf("%c                                                                             %c\n", 186,       186);
-Koor(21,12);  printf("%c        Bahasa Jawa Krama Madya: Bahasa ini digunakan dalam situasi          %c\n", 186,       186);
-Koor(22,12);  printf("%c        yang setengah formal, di mana kesopanan tetap dijaga                 %c\n", 186,       186);
-Koor(23,12);  printf("%c        tetapi tidak seformal Bahasa Krama.                                  %c\n", 186,       186);
-Koor(24,12);  printf("%c                                                                             %c\n", 186,       186);
-Koor(25,12);  printf("%c        Bahasa Jawa Krama Inggil : Bahasa ini sangat formal dan sopan.       %c\n", 186,       186);
-Koor(26,12);  printf("%c                                                                             %c\n", 186,       186);
-Koor(27,12);  printf("%c        %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c       %c\n", 186,              223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,       186);
-Koor(28,12);  printf("%c                                                                             %c\n", 186,       186);
-Koor(29,12);  printf("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", 200,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,188);
-
+Koor(10,20);  printf("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", 201,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,187);
+Koor(11,20);  printf("%c                         !! Baca ini terlebih dahulu !!                      %c\n", 186,       186);
+Koor(12,20);  printf("%c        %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c       %c\n", 186,              220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,220,       186);
+Koor(13,20);  printf("%c                                                                             %c\n", 186,       186);
+Koor(14,20);  printf("%c                         Bahasa Jawa dan Tingkatannya                        %c\n", 186,       186);
+Koor(15,20);  printf("%c                                                                             %c\n", 186,       186);
+Koor(16,20);  printf("%c                                                                             %c\n", 186,       186);
+Koor(17,20);  printf("%c        Bahasa Jawa Ngoko : Bahasa ini lebih santai dan tidak formal.        %c\n", 186,       186);
+Koor(18,20);  printf("%c                                                                             %c\n", 186,       186);
+Koor(19,20);  printf("%c        Bahasa Jawa Krama Madya: Bahasa ini digunakan dalam situasi          %c\n", 186,       186);
+Koor(20,20);  printf("%c        yang setengah formal, di mana kesopanan tetap dijaga                 %c\n", 186,       186);
+Koor(21,20);  printf("%c        tetapi tidak seformal Bahasa Krama.                                  %c\n", 186,       186);
+Koor(22,20);  printf("%c                                                                             %c\n", 186,       186);
+Koor(23,20);  printf("%c        Bahasa Jawa Krama Inggil : Bahasa ini sangat formal dan sopan.       %c\n", 186,       186);
+Koor(24,20);  printf("%c                                                                             %c\n", 186,       186);
+Koor(25,20);  printf("%c        %c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c       %c\n", 186,              223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,223,       186);
+Koor(26,20);  printf("%c Tunggu sebentar ...                                                         %c\n", 186,       186);
+Koor(27,20);  printf("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n", 200,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,188);
 }
 
 
