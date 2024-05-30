@@ -122,7 +122,7 @@ void InsertKata(Address *Tree)
 
     system("cls");
     printf("Saat ini anda akan menambahkan kosakata bahasa Jawa\n");
-    InputKamus(&NewKamus.Jawa);
+    InputKamus(&NewKamus.Jawa, false);
 
     // Lakukan pengecekan pada setiap kosakata yang ada di dalam kamus Jawa
     StringToList(&KamusJawa, NewKamus.Jawa);
@@ -150,7 +150,7 @@ void InsertKata(Address *Tree)
 
         system("cls");
         printf("Saat ini anda akan menambahkan kosakata bahasa Indonesia\n");
-        InputKamus(&NewKamus.Indonesia);
+        InputKamus(&NewKamus.Indonesia, false);
 
         system("cls");
         printf("Ingin menambahkan contohnya?\n");
@@ -158,7 +158,7 @@ void InsertKata(Address *Tree)
         {
             system("cls");
             printf("Saat ini anda akan menambahkan contoh penggunaan bahasa Jawa nya\n");
-            InputKamus(&NewKamus.Contoh);
+            InputKamus(&NewKamus.Contoh, true);
         }
         else
             NewKamus.Contoh = NULL;
@@ -199,7 +199,7 @@ void InsertKata(Address *Tree)
     Pause();
 }
 
-void InputKamus(String *NewVocab)
+void InputKamus(String *NewVocab, bool isContoh)
 {
     *NewVocab = AlokString(1);
     (*NewVocab)[0] = 0;
@@ -208,11 +208,15 @@ void InputKamus(String *NewVocab)
         Input(&(*NewVocab));
         system("cls");
         printf("%s\n", *NewVocab);
-        if ((*NewVocab) != NULL)
+        if ((*NewVocab) != NULL && !isContoh)
         {
-            printf("\nTambahkan sinonim kata bahasa Jawanya?\n");
+            printf("\nTambahkan sinonim?\n");
             if (!Validasi())
                 break;
+        }
+        else
+        {
+            break; // Langsung keluar dari loop jika isContoh
         }
     }
 }
@@ -811,61 +815,50 @@ Address EditTree(Address Tree)
     return Tree;
 }
 
-Address DeleteFromTree(Address *Root, String Input)
-{
-    Address TempTree;
-    TempTree = SearchTree((*Root), Input);
-    if (TempTree != NULL)
-    {
-        if ((*Root) == NULL)
-        {
-            return (*Root);
-        }
-        else if (strcmp(Input, (*Root)->Kamus.Jawa) < 0)
-        {
-            (*Root)->Left = DeleteFromTree(&(*Root)->Left, Input);
-        }
-        else if (strcmp(Input, (*Root)->Kamus.Jawa) > 0)
-        {
-            (*Root)->Right = DeleteFromTree(&(*Root)->Right, Input);
-        }
-        else
-        {
-            // Kasus 1: Leaf node
-            if ((*Root)->Left == NULL && (*Root)->Right == NULL)
-            {
-                free((*Root));
-                (*Root) = NULL;
-            }
-            // Kasus 2: Node memiliki satu anak
-            else if ((*Root)->Left == NULL)
-            {
-                Address temp = (*Root);
-                (*Root) = (*Root)->Right;
-                free(temp);
-            }
-            else if ((*Root)->Right == NULL)
-            {
-                Address temp = (*Root);
-                (*Root) = (*Root)->Left;
-                free(temp);
-            }
-            // Kasus 3: Node memiliki dua anak
-            else
-            {
-                Address temp = minValueTree((*Root)->Right);
-                (*Root)->Kamus = temp->Kamus;
-                (*Root)->Right = DeleteFromTree(&(*Root)->Right, temp->Kamus.Jawa);
-            }
-        }
-        printf("Kata '%s' berhasil terhapus\n", Input);
-        printf("Data kamus setelah dihapus\n");
-        PrintTree(*Root);
-        Pause();
-        return (*Root);
+Address DeleteFromTreeHelper(Address *Root, String Input) {
+    if (*Root == NULL) {
+        return *Root;
     }
-    else
-    {
+
+    if (strcmp(Input, (*Root)->Kamus.Jawa) < 0) {
+        (*Root)->Left = DeleteFromTreeHelper(&(*Root)->Left, Input);
+    } else if (strcmp(Input, (*Root)->Kamus.Jawa) > 0) {
+        (*Root)->Right = DeleteFromTreeHelper(&(*Root)->Right, Input);
+    } else {
+        // Node to be deleted found
+        if ((*Root)->Left == NULL && (*Root)->Right == NULL) {
+            free(*Root);
+            *Root = NULL;
+        } else if ((*Root)->Left == NULL) {
+            Address temp = *Root;
+            *Root = (*Root)->Right;
+            free(temp);
+        } else if ((*Root)->Right == NULL) {
+            Address temp = *Root;
+            *Root = (*Root)->Left;
+            free(temp);
+        } else {
+            Address temp = minValueTree((*Root)->Right);
+            (*Root)->Kamus = temp->Kamus;
+            (*Root)->Right = DeleteFromTreeHelper(&(*Root)->Right, temp->Kamus.Jawa);
+        }
+    }
+    return *Root;
+}
+
+Address DeleteFromTree(Address *Root, String Input) {
+    Address TempTree = SearchTree(*Root, Input);
+    if (TempTree != NULL) {
+        *Root = DeleteFromTreeHelper(Root, Input);
+        printf("Kata '%s' berhasil terhapus\n\n", Input);
+
+        if (*Root != NULL) {
+            printf("Data kamus setelah dihapus\n");
+            PrintTree(*Root);  // Assuming PrintTree traverses and prints the entire tree
+        } else {
+            printf("Tree is empty after deletion.\n");
+        }
+    } else {
         ErrorMsg("Kata Tidak Ditemukan!\n"); // kalo tidak ditemukan
     }
     return *Root;
