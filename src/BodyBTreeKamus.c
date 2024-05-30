@@ -628,8 +628,7 @@ void CheckAndLoadFile(Address *Tree)
     {
         Sukses = false;
         system("cls");
-        // Banner();
-        Menu();
+        Banner();
         SuccMsg("Sedang melakukan pengecekan file Kamus-Jawa-Indonesia.dat...\n");
         int Row = IsFileValid();
         SuccMsg("\nPengecekan sudah selesai...\n");
