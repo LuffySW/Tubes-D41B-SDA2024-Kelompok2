@@ -94,13 +94,6 @@ clean:
 	$(RM) $(call FIXPATH,$(DEPS))
 	@echo Cleanup complete!
 
-# Modify to use PowerShell's Remove-Item command
-clean-windows:
-	Remove-Item -Path $(OUTPUTMAIN)
-	Remove-Item -Path $(call FIXPATH,$(OBJECTS))
-	Remove-Item -Path $(call FIXPATH,$(DEPS))
-	@echo Cleanup complete!
-
 run: all
 	start "" $(OUTPUTMAIN)
 	@echo Executing 'run: all' complete!
